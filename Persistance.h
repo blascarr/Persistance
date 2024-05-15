@@ -36,14 +36,12 @@ class LittleFS_Storage : public IStorage {
   public:
 	LittleFS_Storage() {
 		if (!LittleFS.begin()) {
-			// DUMPSLN("LittleFS mount failed");
 		}
 	}
 	~LittleFS_Storage() { LittleFS.end(); }
 	void save(const String &data, const String &path) override {
 		File file = LittleFS.open(path, "w");
 		if (!file) {
-			// DUMPSLN("Failed to open file for writing");
 			return;
 		}
 		file.println(data);
@@ -53,7 +51,6 @@ class LittleFS_Storage : public IStorage {
 	String load(const String &path) override {
 		File file = LittleFS.open(path, "r");
 		if (!file) {
-			// DUMPSLN("Failed to open file for reading");
 			return "";
 		}
 		String data = file.readStringUntil('\n');
@@ -69,11 +66,42 @@ class LittleFS_Storage : public IStorage {
 #endif
 
 #if defined(ESP32)
+
 #include <FS.h>
-class FS_Storage : public IStorage {
+#include <LittleFS.h>
+class LittleFS_Storage : public IStorage {
   public:
-	void save(const String &data, const String &path) override {}
-	String load(const String &path) override { return ""; }
+	LittleFS_Storage() {
+		if (!LittleFS.begin()) {
+			Serial.println("LittleFS mount failed");
+		}
+	}
+	~LittleFS_Storage() { LittleFS.end(); }
+	void save(const String &data, const String &path) override {
+		File file = LittleFS.open(path, "w");
+		if (!file) {
+			Serial.println("Failed to open file for writing");
+			return;
+		}
+		file.println(data);
+		file.close();
+	}
+
+	String load(const String &path) override {
+		File file = LittleFS.open(path, "r");
+		if (!file) {
+			Serial.println("Failed to open file for writing");
+			return "";
+		}
+		String data = file.readStringUntil('\n');
+		file.close();
+		return data;
+	}
+	void saveJSON(const JsonDocument &data, const String &path) override {}
+	JsonDocument loadJSON(const String &path) override {
+		JsonDocument doc;
+		return doc;
+	}
 };
 #endif
 
