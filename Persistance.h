@@ -32,6 +32,9 @@ class ISerializable : public IStringSerializable, public IJSONSerializable {};
 
 #if !defined(NVS) && defined(SPIFFS_STORAGE)
 #include <FS.h>
+#if defined(ESP32)
+#include "SPIFFS.h"
+#endif
 #define FILESYSTEM SPIFFS
 #define FILESYSTEMNAME "SPIFFS"
 #endif
@@ -48,7 +51,7 @@ class FS_Storage : public IStorage {
 	FS_Storage() {
 		if (!FILESYSTEM.begin()) {
 			Serial.println(FILESYSTEMNAME);
-			Serial.println("LittleFS mount failed");
+			Serial.println(" mount failed");
 		}
 	}
 	~FS_Storage() { FILESYSTEM.end(); }
@@ -80,34 +83,27 @@ class FS_Storage : public IStorage {
 };
 #endif
 
-/*
-#if defined(ESP32) && !defined(NVS)
-class FS_Storage : public IStorage {
+#if defined(NVS)
+#define FILESYSTEMNAME "NVS"
+#include <Preferences.h>
+
+class NVS_Storage : public IStorage {
   public:
-	FS_Storage() {
-		if (!FILESYSTEM.begin()) {
-			Serial.println("LittleFS mount failed");
-		}
-	}
-	~FS_Storage() { FILESYSTEM.end(); }
+	Preferences storage;
+	const char *root = "/";
+	NVS_Storage() { Serial.println("NVS mounted"); }
+	~NVS_Storage() { storage.end(); }
+	void begin(String &path) { storage.begin(path.c_str(), false); }
 	void save(const String &data, const String &path) override {
-		File file = FILESYSTEM.open(path, "w");
-		if (!file) {
-			Serial.println("Failed to open file for writing");
-			return;
-		}
-		file.println(data);
-		file.close();
+		storage.begin(path.c_str(), false);
+		storage.putString(root, data);
+		storage.end();
 	}
 
 	String load(const String &path) override {
-		File file = FILESYSTEM.open(path, "r");
-		if (!file) {
-			Serial.println("Failed to open file for writing");
-			return "";
-		}
-		String data = file.readStringUntil('\n');
-		file.close();
+		storage.begin(path.c_str(), false);
+		String data = storage.getString(root);
+		storage.end();
 		return data;
 	}
 	void saveJSON(const JsonDocument &data, const String &path) override {}
@@ -115,34 +111,13 @@ class FS_Storage : public IStorage {
 		JsonDocument doc;
 		return doc;
 	}
-};
-#endif
-*/
-
-#if defined(NVS)
-#include <Preferences.h>
-
-class NVS_Storage : public IStorage {
-  public:
-	void save(const String &data, const String &path) override {
-		preferences.begin("my-app", false);
-		preferences.putString(path, data);
-		preferences.end();
-	}
-
-	String load(const String &path) override {
-		String data = preferences.getString(path);
-		preferences.end();
-		return data;
-	}
-
 	void remove(const String &path) {
-		preferences.remove(path);
-		preferences.end();
+		storage.remove(root);
+		storage.end();
 	}
 	void removeAll() {
-		preferences.clear();
-		preferences.end();
+		storage.clear();
+		storage.end();
 	}
 };
 #endif
@@ -185,6 +160,7 @@ class Persistance {
 			// TODO: ADD Exception data Empty
 		}
 		// TODO: ADD Exception no storage or datasource
+		return "";
 	}
 };
 
