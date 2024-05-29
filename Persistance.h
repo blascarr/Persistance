@@ -13,22 +13,33 @@ class IStorage {
 	virtual JsonDocument loadJSON(const String &path) = 0;
 };
 
-class IStringSerializable {
+enum SerializableType {
+	STRING_SERIALIZABLE,
+	JSON_SERIALIZABLE,
+	SERIALIZABLE,
+	UNKNOWN
+};
+
+class ISerializable {
   public:
+	virtual SerializableType getType() const = 0;
 	virtual String serialize() { return ""; };
 	virtual bool deserialize(const String &data) { return false; };
 };
 
-class IJSONSerializable {
+class IStringSerializable : public ISerializable {
+	SerializableType getType() const override { return STRING_SERIALIZABLE; }
+};
+
+class IJSONSerializable : public ISerializable {
   public:
 	virtual JsonDocument serializeJSON() {
 		JsonDocument doc;
 		return doc;
 	};
 	virtual bool deserializeJSON(const String &data) { return false; };
+	SerializableType getType() const override { return JSON_SERIALIZABLE; }
 };
-
-class ISerializable : public IStringSerializable, public IJSONSerializable {};
 
 #if !defined(NVS) && defined(SPIFFS_STORAGE)
 #include <FS.h>
