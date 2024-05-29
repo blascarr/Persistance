@@ -142,14 +142,6 @@ class Persistance {
 		// TODO: ADD Exception no storage or datasource
 	}
 
-	void saveDataJSON(const String &path) {
-		if (storageModel && datasource) {
-			String data = datasource->serialize();
-			storageModel->save(data, path);
-		}
-		// TODO: ADD Exception no storage or datasource
-	}
-
 	String loadData(const String &path) {
 		if (storageModel && datasource) {
 			String data = storageModel->load(path);
