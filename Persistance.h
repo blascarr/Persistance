@@ -139,6 +139,8 @@ class Persistance {
 	ISerializable *datasource = nullptr;
 
   public:
+	Persistance() {}
+	Persistance(IStorage *storage) : storageModel(storage) {}
 	Persistance(ISerializable *data) : datasource(data) {}
 	Persistance(ISerializable *data, IStorage *storage)
 		: datasource(data), storageModel(storage) {}
