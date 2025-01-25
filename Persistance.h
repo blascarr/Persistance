@@ -175,6 +175,8 @@ class Persistance {
 		// TODO: ADD Exception no storage or datasource
 		return "";
 	}
+	bool isDataSourceNull() { return datasource == nullptr; }
+	bool isStorageModelNull() { return storageModel == nullptr; }
 };
 
 #endif
