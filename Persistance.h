@@ -149,21 +149,23 @@ class Persistance {
 
 	void setStorageModel(IStorage *model) { storageModel = model; }
 	void setDataSource(ISerializable *data) { datasource = data; }
+
+	// Save data from Datasource in String format.
+	// TODO : Define String raw with serialize
 	void saveData(const String &path) {
-		if (storageModel) {
-			if (datasource) {
-				String data = datasource->serialize();
-			}
+		if (storageModel && datasource) {
+			String data = datasource->serialize();
 			storageModel->save(data, path);
 		}
 		// TODO: ADD Exception no storage or datasource
 	}
 
+	// Save data from Datasource in JSON format
+	// TODO : Define String JSON format with serializeJSON
 	void saveDataJSON(const String &path) {
-		if (storageModel) {
-			if (datasource) {
-				String data = datasource->serialize();
-			}
+		if (storageModel && datasource) {
+			// serializeJSON
+			String data = datasource->serialize();
 			storageModel->save(data, path);
 		}
 		// TODO: ADD Exception no storage or datasource
