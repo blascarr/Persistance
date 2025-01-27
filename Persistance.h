@@ -150,26 +150,32 @@ class Persistance {
 	void setStorageModel(IStorage *model) { storageModel = model; }
 	void setDataSource(ISerializable *data) { datasource = data; }
 	void saveData(const String &path) {
-		if (storageModel && datasource) {
-			String data = datasource->serialize();
+		if (storageModel) {
+			if (datasource) {
+				String data = datasource->serialize();
+			}
 			storageModel->save(data, path);
 		}
 		// TODO: ADD Exception no storage or datasource
 	}
 
 	void saveDataJSON(const String &path) {
-		if (storageModel && datasource) {
-			String data = datasource->serialize();
+		if (storageModel) {
+			if (datasource) {
+				String data = datasource->serialize();
+			}
 			storageModel->save(data, path);
 		}
 		// TODO: ADD Exception no storage or datasource
 	}
 
 	String loadData(const String &path) {
-		if (storageModel && datasource) {
+		if (storageModel) {
 			String data = storageModel->load(path);
 			if (!data.isEmpty()) {
-				datasource->deserialize(data);
+				if (datasource) {
+					datasource->deserialize(data);
+				}
 				return data;
 			}
 			// TODO: ADD Exception data Empty
