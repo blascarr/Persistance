@@ -152,21 +152,21 @@ class Persistance {
 
 	// Save data from Datasource in String format.
 	// TODO : Define String raw with serialize
-	void saveData(const String &path) {
+	void saveData(const String &path, bool overwrite = false) {
 		if (storageModel && datasource) {
 			String data = datasource->serialize();
-			storageModel->save(data, path);
+			storageModel->save(data, path, overwrite);
 		}
 		// TODO: ADD Exception no storage or datasource
 	}
 
 	// Save data from Datasource in JSON format
 	// TODO : Define String JSON format with serializeJSON
-	void saveDataJSON(const String &path) {
+	void saveDataJSON(const String &path, bool overwrite = false) {
 		if (storageModel && datasource) {
 			// serializeJSON
 			String data = datasource->serialize();
-			storageModel->save(data, path);
+			storageModel->save(data, path, overwrite);
 		}
 		// TODO: ADD Exception no storage or datasource
 	}
