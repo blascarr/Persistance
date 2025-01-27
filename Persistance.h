@@ -148,6 +148,7 @@ class Persistance {
 	void setStorageModel(IStorage *model) { storageModel = model; }
 	void setDataSource(ISerializable *data) { datasource = data; }
 
+	IStorage *getStorageModel() const { return storageModel; }
 	// Save data from Datasource in String format.
 	// TODO : Define String raw with serialize
 	void saveData(const String &path) {
