@@ -7,7 +7,8 @@
 class IStorage {
   public:
 	virtual ~IStorage() {}
-	virtual void save(const String &data, const String &path) = 0;
+	virtual void save(const String &data, const String &path,
+					  bool overwrite = false) = 0;
 	virtual String load(const String &path) = 0;
 	virtual void saveJSON(const JsonDocument &data, const String &path) = 0;
 	virtual JsonDocument loadJSON(const String &path) = 0;
@@ -105,8 +106,9 @@ class NVS_Storage : public IStorage {
 	NVS_Storage() { Serial.println("NVS mounted"); }
 	~NVS_Storage() { storage.end(); }
 	void begin(String &path) { storage.begin(path.c_str(), false); }
-	void save(const String &data, const String &path) override {
-		storage.begin(path.c_str(), false);
+	void save(const String &data, const String &path,
+			  bool overwrite = false) override {
+		storage.begin(path.c_str(), overwrite);
 		storage.putString(root, data);
 		storage.end();
 	}
