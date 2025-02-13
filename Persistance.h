@@ -11,6 +11,8 @@ class IStorage {
 	virtual String load(const String &path) = 0;
 	virtual void saveJSON(const JsonDocument &data, const String &path) = 0;
 	virtual JsonDocument loadJSON(const String &path) = 0;
+	virtual void removeAll() = 0;
+	virtual void remove(const String &path) = 0;
 };
 
 enum SerializableType {
@@ -91,6 +93,8 @@ class FS_Storage : public IStorage {
 		JsonDocument doc;
 		return doc;
 	}
+	void remove(const String &path) override {}
+	void removeAll() override {}
 };
 #endif
 
@@ -122,11 +126,11 @@ class NVS_Storage : public IStorage {
 		JsonDocument doc;
 		return doc;
 	}
-	void remove(const String &path) {
+	void remove(const String &path) override {
 		storage.remove(root);
 		storage.end();
 	}
-	void removeAll() {
+	void removeAll() override {
 		storage.clear();
 		storage.end();
 	}
