@@ -105,19 +105,22 @@ class FS_Storage : public IStorage {
 class NVS_Storage : public IStorage {
   public:
 	Preferences storage;
-	const char *root = "/";
-	NVS_Storage() { Serial.println("NVS mounted"); }
+	String root = "/";
+	NVS_Storage() : root("/") { Serial.println("NVS mounted"); }
 	~NVS_Storage() { storage.end(); }
 	void begin(String &path) { storage.begin(path.c_str(), false); }
+	void setRoot(const String &ns) { root = ns; }
+	String getRoot() { return root; }
+
 	void save(const String &data, const String &path) override {
-		storage.begin(path.c_str(), false);
-		storage.putString(root, data);
+		storage.begin(root.c_str(), false);
+		storage.putString(path.c_str(), data);
 		storage.end();
 	}
 
 	String load(const String &path) override {
-		storage.begin(path.c_str(), false);
-		String data = storage.getString(root);
+		storage.begin(root.c_str(), false);
+		String data = storage.getString(path.c_str());
 		storage.end();
 		return data;
 	}
@@ -127,10 +130,12 @@ class NVS_Storage : public IStorage {
 		return doc;
 	}
 	void remove(const String &path) override {
-		storage.remove(root);
+		storage.begin(root.c_str(), false);
+		storage.remove(path.c_str());
 		storage.end();
 	}
 	void removeAll() override {
+		storage.begin(root.c_str(), false);
 		storage.clear();
 		storage.end();
 	}
