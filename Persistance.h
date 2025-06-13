@@ -13,6 +13,8 @@ class IStorage {
 	virtual JsonDocument loadJSON(const String &path) = 0;
 	virtual void removeAll() = 0;
 	virtual void remove(const String &path) = 0;
+	virtual void setRoot(const String &ns) {}
+	virtual String getRoot() { return ""; }
 };
 
 enum SerializableType {
@@ -95,6 +97,8 @@ class FS_Storage : public IStorage {
 	}
 	void remove(const String &path) override {}
 	void removeAll() override {}
+	void setRoot(const String &ns) override {}
+	String getRoot() override { return ""; }
 };
 #endif
 
