@@ -147,10 +147,20 @@ class Persistance {
 	IStorage *storageModel = nullptr;
 	ISerializable *datasource = nullptr;
 
+	void initDefaultStorage() {
+#if defined(NVS)
+		storageModel = new NVS_Storage();
+#else
+		storageModel = new FS_Storage();
+#endif
+	}
+
   public:
-	Persistance() {}
+	Persistance() { initDefaultStorage(); }
 	Persistance(IStorage *storage) : storageModel(storage) {}
-	Persistance(ISerializable *data) : datasource(data) {}
+	Persistance(ISerializable *data) : datasource(data) {
+		initDefaultStorage();
+	}
 	Persistance(ISerializable *data, IStorage *storage)
 		: datasource(data), storageModel(storage) {}
 
